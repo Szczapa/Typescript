@@ -1,17 +1,17 @@
 interface Author {
     name: string;
     birthYear: number;
-    genre: string;
+    genre: string[];
 }
 
 interface Book {
     title: string;
-    author: string;
+    author: Author;
     nbPages: number;
     isAvailable: boolean;
 }
 
-function createBook(title: string, author: string, nbPages: number): Book {
+function createBook(title: string, author: Author, nbPages: number): Book {
     let book: Book = {
         title: title,
         author: author,
@@ -26,13 +26,13 @@ let toggleAvailability = (book: Book) => {
     return book.isAvailable;
 }
 
-
 class Library {
     constructor(public books: Book[] = []) {}
 
     addBook(book: Book) {
         this.books.push(book);
     }
+
     removeBook(title: string) {
         this.books = this.books.filter(book => book.title !== title);
     }
@@ -47,7 +47,7 @@ class Library {
     }
     */
 
-    findBook(title: string) {
+    findBookByTitle(title: string) {
         return this.books.find(book => book.title === title);
     }
 
@@ -55,26 +55,28 @@ class Library {
         return this.books.filter(book => book.isAvailable);
     }   
 
-    getBooksByAuthor(authorName: string): Book[]{
-        return this.books.filter(book => book.author === authorName)
+    getBooksByAuthor(authorName: string): Book[] {
+        return this.books.filter(book => book.author.name === authorName);
     }
-
 }
 
-const book1 = createBook("Dénoncez vous", "WTF",1)
-const book2 = createBook("Mais ou est internet ?", "404 not found", 404)
+// Testing
+const author1: Author = { name: "WTF", birthYear: 1980, genre: ["Science Fiction", "Fantasy"] };
+const author2: Author = { name: "404 Not FOUND", birthYear: 1990, genre: ["Science Fiction", "Fantasy"] };
+
+const book1 = createBook("Dénoncez vous", author1, 1);
+const book2 = createBook("Mais ou est internet ?", author2, 404);
 
 const library = new Library();
 library.addBook(book1);
 library.addBook(book2);
 
-
 console.log("All Books:", library.books);
 console.log("Available Books:", library.listAvailableBooks());
-console.log("Books by Author One:", library.getBooksByAuthor("Author One"));
+console.log("Books by Author WTF:", library.getBooksByAuthor("WTF"));
 
-library.removeBook("Book One");
-console.log("After Removing 'Book One':", library.books);
+library.removeBook("Dénoncez vous");
+console.log("After Removing 'Dénoncez vous':", library.books);
 
 toggleAvailability(book2);
-console.log("After Toggling Availability of 'Book Two':", book2.isAvailable);
+console.log("After Toggling Availability of 'Mais ou est internet ?':", book2.isAvailable);
